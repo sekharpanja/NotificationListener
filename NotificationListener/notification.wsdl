@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Notification WSDL 1.1
+  -->
+<definitions name="NotificationService"
+  targetNamespace="http://webservices.registration.com/notification"
+  xmlns:tns      ="http://webservices.registration.com/notification"
+  xmlns          ="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:wsdl     ="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd      ="http://www.w3.org/2001/XMLSchema"
+  xmlns:soap     ="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:wsaw     ="http://www.w3.org/2006/05/addressing/wsdl">
+  
+  <types>
+    <xsd:schema elementFormDefault="qualified" 
+      targetNamespace="http://webservices.registration.com/notification"
+      xmlns:tns      ="http://webservices.registration.com/notification"
+      xmlns:xsd      ="http://www.w3.org/2001/XMLSchema">
+      
+      <!-- Notify operation comes in four flavours -->
+      <xsd:simpleType name="NotificationActions">
+        <xsd:restriction base="xsd:string">
+          <!-- test -->
+          <xsd:enumeration value="CUSTOMER_REGISTERED" />
+          <xsd:enumeration value="CUSTOMER_UPDATED" />
+          <xsd:enumeration value="CUSTOMER_TRANSFERRED" />
+          <xsd:enumeration value="CUSTOMER_DELETED" />
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:element name="NotificationActions" nillable="true" type="tns:NotificationActions" />
+
+      <!-- Notify operation has two required parameters - the action type, and the reference -->
+      <xsd:element name="Notify">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="action"    nillable="true" minOccurs="1" maxOccurs="1" type="tns:NotificationActions" />
+            <xsd:element name="reference" nillable="true" minOccurs="1" maxOccurs="1" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Notify operation does not return anything -->
+      <xsd:element name="NotifyResponse"><xsd:complexType><xsd:sequence /></xsd:complexType></xsd:element>
+
+    </xsd:schema>
+  </types>
+  
+  <message name="NotifyInputMessage"> <part name="parameters" element="tns:Notify" />        </message>
+  <message name="NotifyOutputMessage"><part name="parameters" element="tns:NotifyResponse" /></message>
+  
+  <portType name="NotificationPortType">
+ 
+    <!-- there is one webmethod, Notify -->
+    <operation name="Notify">
+      <wsdl:input  wsaw:action="Notify" message="tns:NotifyInputMessage" />
+      <wsdl:output wsaw:action="http://webservices.registration.com/notification/NotifyResponse" message="tns:NotifyOutputMessage" />
+    </operation>
+    
+  </portType>
+  
+  <binding name="NotificationBinding" type="tns:NotificationPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="Notify">
+      <soap:operation soapAction="*"/>
+      <input> <soap:body use="literal" /></input>
+      <output><soap:body use="literal" /></output>
+    </operation>
+  </binding>  
+  
+</definitions>
